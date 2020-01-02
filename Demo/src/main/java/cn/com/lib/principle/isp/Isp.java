@@ -1,5 +1,10 @@
 package cn.com.lib.principle.isp;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * 接口隔离原则（Interface Segregation Principle）
  * Created by Else.
@@ -14,4 +19,39 @@ package cn.com.lib.principle.isp;
  * 不再举例
  */
 public class Isp {
+    public static void main(String[] args) {
+        File file=new File("c://test");
+        FileOutputStream outputStream = null;
+        //1.示例
+        try {
+             outputStream=new FileOutputStream(file);
+            outputStream.write(1);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            //对于如下代码，每次都需要嵌套try catch,比较繁琐
+            if(null!=outputStream){
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        //2.接口隔离演示，对于所有需要关闭的流都实现了Closeable接口，该接口只有一个方法close()
+        try {
+            outputStream=new FileOutputStream(file);
+            outputStream.write(1);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            //接口隔离的好处(亦体现了依赖倒置)
+            CloseUtil.Close(outputStream);
+        }
+    }
 }
